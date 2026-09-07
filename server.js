@@ -1,3 +1,11 @@
+const dns = require('dns');
+// Use Google & Cloudflare DNS to ensure reliable MongoDB SRV lookup across all local networks
+try {
+    dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (e) {
+    // Fallback gracefully in restricted environments
+}
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -16,11 +24,11 @@ app.use(express.json());
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-    console.error('ERROR: MONGODB_URI is not defined in .env file');
+    console.error('❌ ERROR: MONGODB_URI is not defined in .env file');
 } else {
     mongoose.connect(MONGODB_URI)
-        .then(() => console.log('MongoDB Connected Successfully!'))
-        .catch(err => console.error('Database connection error:', err.message));
+        .then(() => console.log('✅ MongoDB Connected Successfully!'))
+        .catch(err => console.error('❌ Database connection error:', err.message));
 }
 
 // Root route
@@ -56,5 +64,5 @@ app.get('/health', (req, res) => {
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
