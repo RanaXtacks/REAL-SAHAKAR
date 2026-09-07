@@ -1,0 +1,25 @@
+# Environment variables
+.env
+*.env
+atlas-credentials.env
+
+# Firebase Admin SDK private key
+sahakarconnect-a44ad-firebase-adminsdk-*.json
+
+# Dependencies
+node_modules/
+
+# Python virtual environment
+venv/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
