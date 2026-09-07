@@ -1,5 +1,5 @@
 const dns = require('dns');
-// Use Google & Cloudflare DNS to ensure reliable MongoDB SRV lookup across all local networks
+// Use Google & Cloudflare DNS to ensure reliable MongoDB SRV lookup across local networks
 try {
     dns.setServers(['8.8.8.8', '1.1.1.1']);
 } catch (e) {
@@ -31,13 +31,19 @@ if (!MONGODB_URI) {
         .catch(err => console.error('❌ Database connection error:', err.message));
 }
 
-// Root route
+// Root welcome route
 app.get('/', (req, res) => {
     res.json({
-        name: 'SahakarConnect API',
+        name: 'SahakarConnect Cooperative API',
         version: '1.0.0',
         status: 'online',
-        message: 'Welcome to SahakarConnect Backend'
+        endpoints: {
+            health: 'GET /health',
+            services: 'GET /api/services',
+            auth: 'POST /api/auth/sync',
+            bookings: 'POST /api/bookings',
+            admin: 'GET /api/admin/stats'
+        }
     });
 });
 
@@ -61,8 +67,32 @@ app.get('/health', (req, res) => {
     });
 });
 
+// Mount Feature API Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/services', require('./routes/services'));
+app.use('/api/bookings', require('./routes/bookings'));
+app.use('/api/admin', require('./routes/admin'));
+
+// 404 Handler
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        error: `Route not found: ${req.method} ${req.url}`
+    });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error('Unhandled server error:', err);
+    res.status(500).json({
+        success: false,
+        error: 'Internal server error',
+        details: process.env.NODE_ENV === 'production' ? undefined : err.message
+    });
+});
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`🚀 SahakarConnect API running on http://localhost:${PORT}`);
 });
