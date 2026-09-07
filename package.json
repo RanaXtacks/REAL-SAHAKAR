@@ -1,4 +1,12 @@
 {
+  "name": "sahakarconnect-backend",
+  "version": "1.0.0",
+  "description": "Backend API for SahakarConnect platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
