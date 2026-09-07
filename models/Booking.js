@@ -114,7 +114,7 @@ const bookingSchema = new mongoose.Schema({
 });
 
 // Auto-push initial timeline entry
-bookingSchema.pre('save', function(next) {
+bookingSchema.pre('save', function() {
     if (this.isNew && this.timeline.length === 0) {
         this.timeline.push({
             status: this.status,
@@ -122,7 +122,6 @@ bookingSchema.pre('save', function(next) {
             note: 'Booking requested by customer'
         });
     }
-    next();
 });
 
 module.exports = mongoose.model('Booking', bookingSchema);

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const admin = require('firebase-admin');
+const { initializeApp, cert, getApps } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
 const User = require('../models/User');
 
 let firebaseInitialized = false;
@@ -14,18 +15,18 @@ try {
         const serviceAccountPath = path.join(rootDir, serviceAccountFile);
         const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
 
-        if (!admin.apps.length) {
-            admin.initializeApp({
-                credential: admin.credential ? admin.credential.cert(serviceAccount) : admin.cert(serviceAccount)
+        if (!getApps().length) {
+            initializeApp({
+                credential: cert(serviceAccount)
             });
         }
         firebaseInitialized = true;
         console.log('✅ Firebase Admin SDK initialized successfully!');
     } else if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
         const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
-        if (!admin.apps.length) {
-            admin.initializeApp({
-                credential: admin.credential ? admin.credential.cert(serviceAccount) : admin.cert(serviceAccount)
+        if (!getApps().length) {
+            initializeApp({
+                credential: cert(serviceAccount)
             });
         }
         firebaseInitialized = true;
@@ -73,7 +74,7 @@ async function verifyAuth(req, res, next) {
 
         if (firebaseInitialized) {
             try {
-                decodedUser = await admin.auth().verifyIdToken(token);
+                decodedUser = await getAuth().verifyIdToken(token);
             } catch (fbErr) {
                 if (process.env.NODE_ENV === 'production') {
                     return res.status(401).json({
@@ -130,6 +131,5 @@ function requireRole(allowedRoles) {
 
 module.exports = {
     verifyAuth,
-    requireRole,
-    admin
+    requireRole
 };
