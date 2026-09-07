@@ -96,8 +96,17 @@ const bookingSchema = new mongoose.Schema({
             enum: ['pending', 'paid', 'refunded'],
             default: 'pending'
         },
+        paymentMethod: {
+            type: String,
+            enum: ['razorpay', 'cash', 'pending'],
+            default: 'pending'
+        },
         razorpayOrderId: String,
-        razorpayPaymentId: String
+        razorpayPaymentId: String,
+        splitBreakdown: {
+            type: Object,
+            default: null
+        }
     },
     rating: {
         score: {

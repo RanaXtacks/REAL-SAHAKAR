@@ -60,6 +60,11 @@ router.post('/', verifyAuth, async (req, res) => {
         await booking.populate('service', 'name slug basePrice iconName');
         await booking.populate('customer', 'displayName phoneNumber email');
 
+        // Trigger realtime cascading dispatch asynchronously
+        const { startDispatch } = require('../services/dispatch');
+        const io = req.app.get('io');
+        startDispatch(booking, io).catch(err => console.error('Dispatch trigger error:', err));
+
         res.status(201).json({
             success: true,
             message: 'Booking created successfully and queued for dispatch.',
@@ -67,6 +72,33 @@ router.post('/', verifyAuth, async (req, res) => {
         });
     } catch (error) {
         console.error('Error creating booking:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
+ * GET /api/bookings/:id/match-audit
+ * Admin & Customer: View explainable Fair-Match candidate ranking and score breakdown
+ */
+router.get('/:id/match-audit', verifyAuth, async (req, res) => {
+    try {
+        const booking = await Booking.findById(req.params.id).populate('service');
+        if (!booking) {
+            return res.status(404).json({ success: false, error: 'Booking not found' });
+        }
+
+        const { rankWorkersForBooking } = require('../services/fairMatch');
+        const candidates = await rankWorkersForBooking(booking);
+
+        res.json({
+            success: true,
+            bookingId: booking._id,
+            bookingNumber: booking.bookingNumber,
+            totalCandidatesEvaluated: candidates.length,
+            algorithm: 'Geospatial + XGBoost Fair-Match (Proximity 40%, Rotation 30%, Rating 20%, XGBoost 10%)',
+            candidates
+        });
+    } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
 });
