@@ -1,6 +1,6 @@
-# SahakarConnect — 2-Person Parallel Execution Plan
+# SahakarConnect — 2-Person Parallel Execution Plan (Real-Time Mobile Architecture)
 
-This document outlines the step-by-step parallel roadmap for our 2-person team across all 4 phases of building SahakarConnect.
+This document outlines the step-by-step parallel roadmap for our 2-person team across all phases of building SahakarConnect as a **real-time, downloadable mobile application platform** with a web-based administrative command center.
 
 ---
 
@@ -8,151 +8,188 @@ This document outlines the step-by-step parallel roadmap for our 2-person team a
 
 | Role | Primary Responsibility | Key Deliverables |
 |---|---|---|
-| **Person 1 (Backend & Core Engine)** | Server, Database, APIs, Algorithms & Integrations | Express.js, MongoDB Atlas (Mongoose), Firebase Admin Auth, Fair-Match Algorithm, Socket.io Server, Razorpay Split |
-| **Person 2 (Frontend & Mobile Apps)** | Web Clients, Mobile App & User Interfaces | Next.js Customer Web App, Admin Dashboard, React Native (Expo) Worker App, UI Socket/API Integration |
+| **Person 1 (Backend & Realtime Core Engine)** | Server, Database, Realtime Sockets, Matching Engine & Payment Splits | Express.js, MongoDB Atlas (Mongoose), Firebase Admin Auth, Socket.io Server, Geospatial + ML/XGBoost Fair-Match Engine, Realtime Cascading Dispatch, Twilio/WhatsApp Fallback, Dual Payment Ledger (Razorpay + COD 88/5/4/3 Split) |
+| **Person 2 (Mobile SuperApp & Web Admin)** | Downloadable Mobile Apps & Management Portal | Unified React Native (Expo) `sahakar_app` with seamless role-switching (Customer Mode ↔ Worker Mode), Live GPS tracking map, Realtime 45s countdown popup, Next.js Web Admin Dashboard |
 
 ---
 
-## 📋 Phase 1: Foundations (Target: 1–2 Days)
-*Goal: Prove full stack connectivity (Frontend ↔ Backend ↔ MongoDB Atlas ↔ Deployed Live)*
+## 📱 System Architecture Overview
+
+```
+                        ┌────────────────────────────────────────────────┐
+                        │              EXPRESS + SOCKET.IO               │
+                        │           Backend Server (Render)             │
+                        └───────┬────────────────────────┬───────────────┘
+                                │                        │
+               REST + Realtime Socket            REST + Realtime Socket
+                                │                        │
+         ┌──────────────────────┴───────┐         ┌──────┴───────────────────────┐
+         │     CUSTOMER MOBILE MODE     │         │      WORKER MOBILE MODE      │
+         │  • Browse categories & book  │         │  • Online/Offline toggle     │
+         │  • Realtime status timeline  │         │  • Realtime 45s Offer Popup  │
+         │  • Live GPS worker map       │         │  • Milestone actions         │
+         │  • Pay via Razorpay or COD   │         │  • GPS live location stream  │
+         └──────────────────────────────┘         └──────────────────────────────┘
+                       ▲                                         ▲
+                       └───────────────────┬─────────────────────┘
+                                           │
+                           📱 UNIFIED "sahakar_app" (Expo)
+                           One Downloadable Android APK
+                                           │
+                                 (Desktop Web Browser)
+                                           ▼
+                           💻 Next.js Admin Panel (`frontend/`)
+                           Cooperative Governance & Live Monitoring
+```
+
+---
+
+## 📋 Phase 1: Foundations & Infrastructure (Target: 1–2 Days)
+*Goal: Prove full-stack connectivity: Mobile App ↔ Backend ↔ MongoDB Atlas ↔ Socket.io ↔ Render*
 
 ### 👤 Person 1 Tasks (Backend Track):
-1. **Clean & Prepare Server:**
-   - Uninstall unnecessary placeholder dependencies: `npm uninstall node.js`
-   - Add run scripts to `package.json`:
-     ```json
-     "scripts": {
-       "start": "node server.js",
-       "dev": "node --watch server.js"
-     }
-     ```
-   - Add `GET /health` route in `server.js` returning `{ status: "ok", timestamp: new Date().toISOString() }`.
-2. **Verify Database Connection:**
-   - Test read/write connectivity with MongoDB Atlas.
-3. **Deploy Backend on Render (Free Tier):**
-   - Create a Web Service on [render.com](https://render.com) connected to the GitHub repo.
-   - Add `MONGODB_URI` environment variable in Render settings.
-   - Provide the live backend URL (e.g., `https://sahakar-api.onrender.com`) to Person 2.
+1. **Server & Socket.io Initialization:**
+   - Upgrade `server.js` from plain Express to `http.createServer(app)` with `socket.io`.
+   - Add CORS configuration supporting both local network IPs (for mobile dev) and production domains.
+   - Verify health check route `GET /health` reporting MongoDB status and active socket client count.
+2. **MongoDB Atlas Geospatial Indexing:**
+   - Configure SRV DNS and verify connection to Atlas cluster.
+   - Create `2dsphere` index on worker and booking geospatial coordinates.
+3. **Deploy Backend to Render:**
+   - Deploy backend on Render with live URL (e.g., `https://sahakar-api.onrender.com`).
+   - Configure environment variables (`MONGODB_URI`, `PORT`, `FIREBASE_SERVICE_ACCOUNT`).
 
-### 👤 Person 2 Tasks (Frontend Track):
-1. **Initialize Next.js Project:**
-   - Scaffold the app in the repository root or `/frontend`:
-     ```bash
-     npx create-next-app@latest frontend --tailwind --app --js
-     ```
-2. **Build Connectivity Test Page:**
-   - In `frontend/app/page.js`, make a `fetch()` call to the `/health` endpoint using `process.env.NEXT_PUBLIC_API_URL`.
-   - Show a visual indicator (Green/Red badge) confirming backend and DB connectivity.
-3. **Deploy Frontend on Vercel (Free Tier):**
-   - Connect the repo to [vercel.com](https://vercel.com) with root directory set to `frontend`.
-   - Set environment variable `NEXT_PUBLIC_API_URL` to Person 1's Render URL.
+### 👤 Person 2 Tasks (Mobile & Web Track):
+1. **Consolidate Mobile SuperApp (`sahakar_app/`):**
+   - Structure `sahakar_app` with unified navigation enabling instant role-switching between **Customer Mode** and **Worker Mode**.
+   - Install core mobile packages: `@react-navigation/native`, `@react-navigation/native-stack`, `@react-navigation/bottom-tabs`, `socket.io-client`, `axios`, `expo-location`, `react-native-maps`, `@react-native-async-storage/async-storage`.
+2. **Mobile Connectivity & Socket Ping Screen:**
+   - Add a developer debug card in the mobile app testing REST `/health` and emitting a test socket ping to the server.
+3. **Initialize Web Admin (`frontend/`):**
+   - Clean Next.js project in `frontend/` designated specifically for cooperative administrators.
+   - Connect and verify API reachability from the admin web dashboard.
 
-> **🎯 Phase 1 Milestone:** You both have live URLs on the internet communicating with the cloud database.
+> **🎯 Phase 1 Milestone:** Mobile app connects to live backend on Render; socket connection confirms two-way realtime communication between phone and server.
 
 ---
 
-## 📋 Phase 2: Core Data & Booking CRUD (Target: 3–5 Days)
-*Goal: Real customer sign up, create a booking; Admin can view all bookings in a dashboard.*
+## 📋 Phase 2: Core Data, Authentication & Booking Pipeline (Target: 3–5 Days)
+*Goal: Real customer authentication, service catalog, booking creation, and worker profile onboarding on mobile.*
 
 ### 👤 Person 1 Tasks (Backend Track):
-1. **Design Mongoose Schemas (`models/`):**
-   - `User.js`: Firebase UID, name, phone, email, role (`customer`, `worker`, `admin`).
-   - `WorkerProfile.js`: User reference, skills array, location GeoJSON, online status.
-   - `ServiceCategory.js`: Category name, description, icon, basePrice.
-   - `Booking.js`: Customer reference, service reference, status (`pending`, `matched`, `accepted`, `in_progress`, `completed`, `cancelled`), address, scheduledAt.
-2. **Implement Firebase Auth Middleware (`middleware/auth.js`):**
-   - Verify incoming Bearer token using Firebase Admin SDK.
-   - Attach authenticated user details and role to `req.user`.
-3. **Build Core REST APIs (`routes/`):**
-   - `POST /api/auth/sync` — Sync user profile upon Firebase login.
-   - `GET /api/services` — Public list of service categories.
-   - `POST /api/bookings` — Create a new booking (status: `pending`).
-   - `GET /api/bookings/my` — Get bookings for the authenticated customer.
-   - `GET /api/admin/bookings` & `GET /api/admin/workers` — Admin-only dashboard feeds.
+1. **Mongoose Schemas (`models/`):**
+   - `User.js`: Firebase UID, phone, name, email, activeRole (`customer` | `worker` | `admin`), walletBalance.
+   - `WorkerProfile.js`: User ref, category, skills array, verificationStatus, isOnline, currentLocation (GeoJSON Point), lastJobAssignedAt, ratingAvg.
+   - `Booking.js`: Customer ref, worker ref, category, serviceDetails, status (`pending`, `offered`, `accepted`, `en_route`, `arrived`, `in_progress`, `completed`, `cancelled`), pickup/serviceLocation (GeoJSON Point), paymentMethod (`razorpay` | `cash`), paymentStatus, financialBreakdown.
+2. **Authentication & Session Sync (`middleware/auth.js` & `routes/auth.js`):**
+   - Firebase Phone OTP verification middleware.
+   - `POST /api/auth/sync`: Creates/fetches user record and returns active profile.
+   - `POST /api/auth/switch-role`: Allows toggling between customer and worker roles.
+3. **Core REST APIs (`routes/`):**
+   - `GET /api/services`: Dynamic list of available cooperative trade categories (Electrician, Plumber, Carpenter, etc.).
+   - `POST /api/bookings`: Create booking entry and initialize matching cycle.
+   - `GET /api/bookings/my`: Realtime list of customer's active and historical orders.
+   - `GET /api/worker/profile` & `PUT /api/worker/status`: Update worker availability (online/offline) and category.
 
-### 👤 Person 2 Tasks (Frontend Track):
-1. **Firebase Client Authentication:**
-   - Set up Firebase Web SDK in Next.js.
-   - Build `/login` supporting Phone OTP for customers and Email/Password for Admin.
-2. **Customer Booking Flow:**
-   - **Home Page (`/`):** Service category showcase cards.
-   - **Booking Page (`/book/[serviceId]`):** Address input and scheduled date/time picker.
-   - **My Bookings (`/my-bookings`):** List of past and active bookings with current status.
-3. **Admin Dashboard (`/admin`):**
-   - Build a clean dashboard displaying live tables of all bookings and registered workers.
-   - Implement TanStack Query (`@tanstack/react-query`) for smooth data fetching and caching.
+### 👤 Person 2 Tasks (Mobile App Track):
+1. **Authentication Flow (Customer & Worker):**
+   - Modern dark/light onboarding with Phone OTP verification.
+   - Mode switcher on Profile drawer/header: "Switch to Worker Mode" / "Switch to Customer Mode".
+2. **Customer Booking Flow (Mobile):**
+   - **Explore/Home Tab:** Service category grid with dynamic pricing and ETA badges.
+   - **Booking Screen:** Location selector (with auto-detect via `expo-location`), scheduled slot or instant dispatch, service notes.
+   - **Payment Preference Selector:** Choose between Online (UPI/Card) or Cash on Delivery (COD).
+3. **Worker Profile & Go-Online Flow (Mobile):**
+   - Worker dashboard with large "GO ONLINE" toggle switch.
+   - Service category selector and current trade certification/skill tags.
+4. **Admin Dashboard Foundation (`frontend/`):**
+   - Next.js live overview displaying all bookings and registered workers.
 
-> **🎯 Phase 2 Milestone:** A real user can log in on the frontend, place a service booking, and it immediately appears on the admin dashboard.
+> **🎯 Phase 2 Milestone:** A customer can open the app on Android, place a service request with location, and the booking is logged in MongoDB with matching initiated.
 
 ---
 
-## 📋 Phase 3: Realtime Matching, Mobile App & Payments (Target: 5–7 Days)
-*Goal: Customer books → Worker receives offer on Mobile App → Accepts → Completes → Customer Pays.*
+## 📋 Phase 3: Realtime Matching, Live GPS Tracking & Payments (Target: 5–7 Days)
+*Goal: Intelligent ML/Fair-Match dispatch → 45s countdown popup → Live GPS stream on map → Dual payment & 88/5/4/3 split.*
 
 ### 👤 Person 1 Tasks (Backend Track):
-1. **Worker Geospatial Search:**
-   - Add `2dsphere` index to `WorkerProfile.location`.
-   - Build a query to find available workers within an 8km radius using MongoDB `$near`.
-2. **Fair-Match Engine v1 (2 Factors):**
-   - Create `services/fairMatch.js`:
-     - Factor 1: **Proximity Score** (distance from job location, weight: 0.6).
-     - Factor 2: **Rotation-Fairness Score** (time elapsed since last assigned job, weight: 0.4).
-3. **Socket.io Realtime Dispatch Server:**
-   - Upgrade HTTP server to support Socket.io.
-   - Manage worker connections and rooms (`worker-${workerId}`).
-   - Emit `new-offer` to the top Fair-Match candidate with a 45-second timer.
-   - Implement accept/reject logic and automatic cascading re-offer to the next best worker.
-4. **Razorpay & Commission Split:**
-   - Set up Razorpay Node.js SDK (`POST /api/payments/create-order`).
-   - On successful payment webhook, execute the **88/5/4/3** cooperative split in a multi-document transaction:
-     - **88%** Worker Payout
-     - **5%** Society Fee
-     - **4%** Platform Maintenance
-     - **3%** Worker Welfare Fund
+1. **Geospatial + XGBoost / Fair-Match Ranking Engine (`services/fairMatch.js`):**
+   - Step 1: MongoDB `$nearSphere` geospatial filter to locate online, idle workers within 8km radius belonging to the requested category.
+   - Step 2: Multi-factor ranking calculation:
+     - **Proximity Score (40%)**: Distance decay function from customer coordinates.
+     - **Rotation Fairness Score (30%)**: Time elapsed since last allocated booking (prevents work monopolization).
+     - **Performance / Rating Score (20%)**: Historical completed job ratings and punctuality.
+     - **XGBoost / Acceptance Probability Score (10%)**: Prediction based on worker category and historical acceptance rate.
+2. **Realtime Socket.io Cascading Dispatch Server (`services/dispatch.js`):**
+   - Assign exclusive 45-second offer to the #1 ranked candidate.
+   - Emit `new-offer` to candidate's socket room (`worker:${workerId}`).
+   - **SMS / WhatsApp Fallback (Twilio / Gupshup):** If worker fails to interact with in-app socket within 15 seconds, trigger an instant urgent SMS/WhatsApp alert with deep link.
+   - **Auto-Cascade Logic:** If worker taps "Deny" or 45s timer expires without response, immediately penalize response score and auto-cascade offer to candidate #2.
+3. **Live GPS Stream Relay (`sockets/tracking.js`):**
+   - Listen for `worker-location-update` events from active worker.
+   - Broadcast live coordinates to `booking:${bookingId}` room for the customer map in real time.
+4. **Dual Payment & Cooperative Split Engine (`services/payment.js`):**
+   - **Razorpay Online Flow:** Create order via Razorpay SDK; verify signature on completion webhook.
+   - **Cash on Delivery (COD) Flow:** Worker marks cash collected; customer confirms OTP or in-app prompt.
+   - **Cooperative Commission Split (Multi-document Transaction):**
+     - **88%** Direct Worker Payout
+     - **5%** Primary Society Fee
+     - **4%** Platform Maintenance & Tech
+     - **3%** Worker Emergency Welfare Fund
 
-### 👤 Person 2 Tasks (Frontend & Mobile Track):
-1. **Worker Mobile App (React Native + Expo):**
-   - Scaffold Expo app in `/worker-app` (`npx create-expo-app@latest worker-app`).
-   - Worker login screen and "Go Online / Offline" status switch.
-2. **Realtime Job Offer UI:**
-   - Connect the worker app to Socket.io.
-   - Build an incoming offer popup with a 45-second countdown bar, payout amount, and distance.
-3. **Worker Execution Flow:**
-   - Action buttons: "En Route" ➔ "Arrived" ➔ "Start Job" ➔ "Complete Job".
-4. **Customer Live Tracking & Payment Screen:**
-   - Live status timeline on customer web app synced via Socket.io.
-   - Razorpay Checkout modal triggering upon job completion.
-   - Post-service 1–5 star rating submission.
+### 👤 Person 2 Tasks (Mobile App Track):
+1. **Realtime Job Offer Modal (`components/OfferModal.js`):**
+   - High-urgency overlay popping up on worker device with sound & vibration.
+   - Animated 45-second radial countdown bar, customer distance, category, and guaranteed net payout.
+   - "ACCEPT" (Green) and "DECLINE" (Red) action buttons emitting instant socket events.
+2. **Active Job Lifecycle & Milestone Controller:**
+   - Sequential worker progression: **En Route ➔ Arrived ➔ Start Job ➔ Complete Job**.
+   - Background GPS streaming during "En Route" using `expo-location` updating server every 5 seconds.
+3. **Customer Realtime Live Tracking Screen (`screens/CustomerTrackingScreen.js`):**
+   - Interactive live map (`react-native-maps`) showing worker's moving marker and ETA.
+   - Milestone status timeline updated instantly via Socket.io without page refreshes.
+4. **Payment & Rating Dialogs:**
+   - In-app Razorpay checkout for online payment OR Cash receipt confirmation.
+   - Immediate breakdown display: "You paid ₹500 (Worker receives ₹440 / Cooperative keeps ₹60)".
+   - 5-star rating submission with feedback tags.
 
-> **🎯 Phase 3 Milestone:** Full end-to-end demo: Customer books ➔ Worker accepts on mobile ➔ Completes job ➔ Customer pays ➔ Commission split recorded.
+> **🎯 Phase 3 Milestone:** Complete end-to-end realtime demonstration: Customer books → Worker phone rings with 45s popup → Worker accepts → Customer watches worker approach on live map → Job completes → Customer pays via Razorpay or COD → Cooperative 88/5/4/3 split is recorded.
 
 ---
 
-## 📋 Phase 4: Cooperative Differentiators & Finale Polish (36-Hour Hackathon)
+## 📋 Phase 4: Cooperative Differentiators, Governance & Demo Polish (36-Hour Hackathon)
 
 ### 👤 Person 1 Tasks (Backend Track):
-1. **Fair-Match 4-Factor Engine:** Extend algorithm to incorporate worker ratings and skill-match weights.
-2. **Welfare Fund & Dispute Backend:** Endpoints for emergency welfare claims and society dispute logs.
-3. **Identity Verification Sandbox (Stretch):** Sandbox.co.in / Setu Aadhaar mock verification API.
+1. **Fair-Match Explainability API (`GET /api/admin/match-audit/:bookingId`):**
+   - Returns full mathematical breakdown of why Worker A was chosen over Worker B (Proximity, Rotation, Fairness index, Category match).
+2. **Worker Welfare Fund Ledger & Emergency Claims API:**
+   - Routes for workers to view accrued 3% emergency fund balance and submit micro-welfare claims (medical, tool repair).
+3. **Identity & Skill Verification Sandbox (Stretch):**
+   - Mock Aadhaar / Skill Council verification endpoint confirming verified worker badges.
 
-### 👤 Person 2 Tasks (Frontend Track):
-1. **Fair-Match Explainability Panel:** Admin view visually breaking down the formula score for why Worker X won over Worker Y (major judging demo highlight).
-2. **Welfare Claims & Governance UI:** Worker claim submission form and society admin review portal.
-3. **Demo Polish:** Loading skeletons, empty states, realistic seed data, and a backup demo video recording.
+### 👤 Person 2 Tasks (Mobile & Web Admin Track):
+1. **Admin Fair-Match Audit Panel (`frontend/app/admin/matches`):**
+   - Visual inspection tool comparing worker candidate scores with radar charts to demonstrate anti-monopoly fair distribution to hackathon judges.
+2. **Worker Welfare & Cooperative Governance Screen:**
+   - In-app mobile screen showing the worker their cooperative dividends, insurance cover, and voting rights.
+3. **Demo Readiness & Presentation Polish:**
+   - Realistic seed data for 15 workers and 10 categories across Pune/Mumbai coordinates.
+   - Expo production APK build using EAS CLI: `eas build -p android --profile preview`.
+   - Backup offline demo script and screen recording.
 
 ---
 
-## 🛠️ Quick Git Workflow for 2 People
+## 🛠️ Git & Development Coordination Workflow
 
-1. **Person 1** works on backend routes and server files.
-2. **Person 2** works in `frontend/` and `worker-app/` folders.
+1. **Person 1** works in root (`server.js`, `routes/`, `models/`, `services/`, `sockets/`).
+2. **Person 2** works in `sahakar_app/` (Mobile SuperApp) and `frontend/` (Web Admin).
 3. Always pull latest changes before starting work:
    ```bash
    git pull origin main
    ```
-4. Commit and push feature changes with clear messages:
+4. Commit and push feature changes with descriptive conventional commit messages:
    ```bash
    git add .
-   git commit -m "feat(backend): add booking CRUD routes"
+   git commit -m "feat(realtime): implement 45s cascading dispatch and live GPS socket relay"
    git push origin main
    ```
