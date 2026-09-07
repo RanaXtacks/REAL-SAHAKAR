@@ -6,7 +6,6 @@
     "firebase": "^12.18.0",
     "mongodb": "^7.6.0",
     "mongoose": "^9.9.5",
-    "node.js": "^0.0.1-security",
     "socket.io": "^4.8.3"
   }
 }
