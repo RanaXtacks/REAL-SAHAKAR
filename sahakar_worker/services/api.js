@@ -2,14 +2,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API_URL } from '../config';
 
-const api = axios.create({ baseURL: API_URL });
+export const api = axios.create({
+    baseURL: API_URL,
+    timeout: 10000
+});
 
 // Attach stored auth token to every request
 api.interceptors.request.use(async (config) => {
-    const token = await AsyncStorage.getItem('workerToken');
-    if (token) config.headers['x-dev-uid'] = token; // dev mode
+    try {
+        const token = await AsyncStorage.getItem('workerToken');
+        if (token) {
+            config.headers['x-dev-uid'] = token; // dev mode
+        }
+    } catch (e) {}
     return config;
-});
+}, (error) => Promise.reject(error));
 
 export const authApi = {
     // Sync worker profile after login

@@ -22,20 +22,29 @@ export default function LoginScreen({ navigation }) {
         try {
             const devUid = `worker-${phone.replace(/\s/g, '')}`;
 
-            const response = await authApi.sync({
-                role: 'worker',
-                displayName: name,
-                phoneNumber: phone,
-                skills: ['General Repairs'],
-            });
+            let workerId = 'dev-worker-101';
+            try {
+                const response = await authApi.sync({
+                    role: 'worker',
+                    displayName: name,
+                    phoneNumber: phone,
+                    skills: ['General Repairs'],
+                });
+                if (response?.data?.user?._id) {
+                    workerId = response.data.user._id;
+                }
+            } catch (apiErr) {
+                console.warn('Backend sync notice (proceeding in local dev mode):', apiErr.message);
+            }
 
             await AsyncStorage.setItem('workerToken', devUid);
             await AsyncStorage.setItem('workerName', name);
-            await AsyncStorage.setItem('workerId', response.data.user._id);
+            await AsyncStorage.setItem('workerId', workerId);
+            await AsyncStorage.setItem('activeMode', 'worker');
 
             navigation.replace('Home');
         } catch (error) {
-            Alert.alert('Login Failed', error?.response?.data?.error || error.message);
+            Alert.alert('Login Error', error.message);
         } finally {
             setLoading(false);
         }
