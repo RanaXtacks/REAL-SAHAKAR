@@ -93,9 +93,17 @@ export default function HomeScreen({ navigation }) {
                         {isOnline ? '🟢 You are online & receiving jobs' : '🔴 You are offline'}
                     </Text>
                 </View>
-                <TouchableOpacity onPress={handleLogout}>
-                    <Text style={styles.logout}>Logout</Text>
-                </TouchableOpacity>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableOpacity
+                        style={styles.switchPill}
+                        onPress={() => navigation.replace('CustomerHome')}
+                    >
+                        <Text style={styles.switchPillText}>👷 ⇄ 👤 Customer</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleLogout} style={{ marginLeft: 12 }}>
+                        <Text style={styles.logout}>Logout</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
 
             {/* Online Toggle */}
@@ -190,6 +198,15 @@ const styles = StyleSheet.create({
     greeting: { fontSize: 22, fontWeight: '800', color: '#fff' },
     subGreeting: { fontSize: 13, color: '#888', marginTop: 4 },
     logout: { color: '#FF3B30', fontSize: 14, fontWeight: '600' },
+    switchPill: {
+        backgroundColor: '#1E2330',
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 14,
+        borderWidth: 1,
+        borderColor: '#10B981',
+    },
+    switchPillText: { color: '#10B981', fontSize: 11, fontWeight: '700' },
     toggleCard: {
         backgroundColor: '#12122A', borderRadius: 20, padding: 20,
         flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
