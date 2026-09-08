@@ -101,4 +101,38 @@ router.get('/me', verifyAuth, async (req, res) => {
     }
 });
 
+/**
+ * POST /api/auth/switch-role
+ * Toggles active role between 'customer' and 'worker'
+ */
+router.post('/switch-role', verifyAuth, async (req, res) => {
+    try {
+        const user = req.dbUser;
+        const { targetRole } = req.body;
+
+        const newRole = targetRole && ['customer', 'worker'].includes(targetRole)
+            ? targetRole
+            : (user.role === 'worker' ? 'customer' : 'worker');
+
+        user.role = newRole;
+        await user.save();
+
+        let profile = null;
+        if (newRole === 'worker') {
+            profile = await WorkerProfile.findOne({ user: user._id });
+        } else {
+            profile = await CustomerProfile.findOne({ user: user._id });
+        }
+
+        res.json({
+            success: true,
+            message: `Role switched to ${newRole}`,
+            user,
+            profile
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 module.exports = router;
