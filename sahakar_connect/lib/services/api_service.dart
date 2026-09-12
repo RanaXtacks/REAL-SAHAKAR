@@ -148,6 +148,32 @@ class ApiService {
     }
   }
 
+  // Spatial: Fetch nearby workers via PostgreSQL PostGIS
+  Future<List<Map<String, dynamic>>> getNearbyWorkersPostGIS({
+    double lat = 19.0596,
+    double lng = 72.8360,
+    double radiusKm = 10.0,
+  }) async {
+    try {
+      final uri = Uri.parse(
+        '$_baseUrl${ApiConfig.spatialNearby}?lat=$lat&lng=$lng&radiusKm=$radiusKm',
+      );
+      final response = await http.get(uri, headers: _getHeaders()).timeout(
+            const Duration(seconds: 8),
+          );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['data'] is List) {
+          return List<Map<String, dynamic>>.from(data['data']);
+        }
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
   // Bookings: Create new service booking
   Future<Booking> createBooking({
     required String serviceId,

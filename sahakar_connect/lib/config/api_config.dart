@@ -1,7 +1,21 @@
+import 'package:flutter/foundation.dart';
+
 class ApiConfig {
-  // Render hosted backend URL (can switch to http://10.0.2.2:5000 for Android Emulator or local IP)
-  static const String baseUrl = 'https://real-sahakar.onrender.com';
-  static const String socketUrl = 'https://real-sahakar.onrender.com';
+  // Local backend URL for active development
+  static String get baseUrl {
+    if (kIsWeb) {
+      return 'http://localhost:5000';
+    }
+    // Android Emulator uses 10.0.2.2 to reach host machine localhost
+    return 'http://10.0.2.2:5000';
+  }
+
+  static String get socketUrl {
+    if (kIsWeb) {
+      return 'http://localhost:5000';
+    }
+    return 'http://10.0.2.2:5000';
+  }
 
   // Fallback local URL if testing locally
   static const String localBaseUrl = 'http://10.0.2.2:5000';
@@ -19,4 +33,5 @@ class ApiConfig {
   static const String paymentConfirm = '/api/payments/confirm';
   static const String adminWorkers = '/api/admin/workers';
   static const String adminStats = '/api/admin/stats';
+  static const String spatialNearby = '/api/spatial/nearby-workers';
 }
