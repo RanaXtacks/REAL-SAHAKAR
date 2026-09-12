@@ -9,10 +9,10 @@ import '../../services/localization_service.dart';
 import '../../widgets/language_selector.dart';
 import '../../widgets/service_category_card.dart';
 import '../../widgets/worker_card.dart';
-import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/customer_bottom_nav.dart';
 import 'worker_listing_screen.dart';
 import 'booking_flow_screen.dart';
-import '../worker/worker_dashboard_screen.dart';
+import 'my_bookings_screen.dart';
 import '../customer/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -62,10 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
         MaterialPageRoute(builder: (_) => const WorkerListingScreen()),
       );
     } else if (index == 2) {
-      // Worker Portal tab
+      // My Bookings tab (Customer Only)
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const WorkerDashboardScreen()),
+        MaterialPageRoute(builder: (_) => const MyBookingsScreen()),
       );
     } else if (index == 3) {
       // Profile tab
@@ -421,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: SahakarBottomNavBar(
+      bottomNavigationBar: CustomerBottomNavBar(
         currentIndex: _currentTabIndex,
         onTap: _handleTabSelected,
       ),

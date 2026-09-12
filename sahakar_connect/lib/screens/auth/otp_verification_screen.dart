@@ -3,6 +3,7 @@ import '../../config/theme.dart';
 import '../../services/auth_service.dart';
 import '../../services/localization_service.dart';
 import '../customer/home_screen.dart';
+import '../worker/worker_dashboard_screen.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String verificationId;
@@ -59,11 +60,19 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       );
 
       if (!mounted) return;
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-        (route) => false,
-      );
+      if (widget.role == 'worker') {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const WorkerDashboardScreen()),
+          (route) => false,
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          (route) => false,
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

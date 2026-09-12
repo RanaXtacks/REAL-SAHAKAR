@@ -6,6 +6,7 @@ import '../../services/auth_service.dart';
 import '../../services/storage_service.dart';
 import '../../services/localization_service.dart';
 import '../customer/home_screen.dart';
+import '../worker/worker_dashboard_screen.dart';
 import '../auth/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -39,10 +40,17 @@ class _SplashScreenState extends State<SplashScreen> {
     // Check if user is logged in
     final user = AuthService().currentUser;
     if (user != null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
+      if (user.role == 'worker') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const WorkerDashboardScreen()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
     } else {
       Navigator.pushReplacement(
         context,

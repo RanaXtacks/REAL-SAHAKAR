@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import '../../config/theme.dart';
 import '../../models/booking.dart';
 import '../../services/socket_service.dart';
+import '../../services/location_service.dart';
 import 'payment_screen.dart';
 
 class LiveTrackingScreen extends StatefulWidget {
@@ -38,6 +39,9 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
     super.initState();
     _mapController = MapController();
     _currentStatus = widget.booking.status;
+
+    // Check location permission
+    LocationService().handlePermission();
 
     // Listen to realtime socket events
     _locationSub = SocketService().onLocationStream.listen((data) {
@@ -120,7 +124,7 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
                     children: [
                       TileLayer(
                         urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        userAgentPackageName: 'com.sahakar.connect',
+                        userAgentPackageName: 'com.sahakar.sahakar_connect',
                       ),
                       MarkerLayer(
                         markers: [

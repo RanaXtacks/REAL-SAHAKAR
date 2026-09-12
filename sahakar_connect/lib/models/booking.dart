@@ -105,6 +105,59 @@ class Booking {
     this.createdAt,
   });
 
+  String get serviceCategory => service?.name ?? serviceId;
+  String get serviceAddress => streetAddress;
+  double get totalAmount => pricing.totalAmount;
+  double get workerAmount => pricing.workerShare;
+
+  Booking copyWith({
+    String? id,
+    String? bookingNumber,
+    String? customerId,
+    AppUser? customer,
+    String? workerId,
+    AppUser? worker,
+    String? serviceId,
+    ServiceCategory? service,
+    String? status,
+    String? streetAddress,
+    String? city,
+    String? pincode,
+    double? latitude,
+    double? longitude,
+    DateTime? scheduledAt,
+    String? notes,
+    BookingPricing? pricing,
+    double? ratingScore,
+    String? ratingComment,
+    List<BookingTimeline>? timeline,
+    DateTime? createdAt,
+  }) {
+    return Booking(
+      id: id ?? this.id,
+      bookingNumber: bookingNumber ?? this.bookingNumber,
+      customerId: customerId ?? this.customerId,
+      customer: customer ?? this.customer,
+      workerId: workerId ?? this.workerId,
+      worker: worker ?? this.worker,
+      serviceId: serviceId ?? this.serviceId,
+      service: service ?? this.service,
+      status: status ?? this.status,
+      streetAddress: streetAddress ?? this.streetAddress,
+      city: city ?? this.city,
+      pincode: pincode ?? this.pincode,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      scheduledAt: scheduledAt ?? this.scheduledAt,
+      notes: notes ?? this.notes,
+      pricing: pricing ?? this.pricing,
+      ratingScore: ratingScore ?? this.ratingScore,
+      ratingComment: ratingComment ?? this.ratingComment,
+      timeline: timeline ?? this.timeline,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
   factory Booking.fromJson(Map<String, dynamic> json) {
     AppUser? cust;
     String cId = '';

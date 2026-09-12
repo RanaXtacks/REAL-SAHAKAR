@@ -5,6 +5,7 @@ import '../../services/auth_service.dart';
 import '../../services/localization_service.dart';
 import '../../widgets/language_selector.dart';
 import '../customer/home_screen.dart';
+import '../worker/worker_dashboard_screen.dart';
 import 'otp_verification_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -70,10 +71,17 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await AuthService().demoLogin(role: role, name: name, phone: phone);
       if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
+      if (role == 'worker') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const WorkerDashboardScreen()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

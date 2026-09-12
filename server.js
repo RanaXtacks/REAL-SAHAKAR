@@ -200,6 +200,7 @@ app.use('/api/services', require('./routes/services'));
 app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/spatial', require('./routes/spatial'));
 
 // 404 Handler
 app.use((req, res) => {

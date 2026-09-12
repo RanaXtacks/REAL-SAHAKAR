@@ -5,8 +5,13 @@ import '../../models/user.dart';
 import '../../services/auth_service.dart';
 import '../../services/socket_service.dart';
 import '../../services/localization_service.dart';
+import '../../widgets/worker_bottom_nav.dart';
 import 'offer_modal.dart';
 import 'worker_registration_screen.dart';
+import 'worker_jobs_screen.dart';
+import 'worker_map_screen.dart';
+import 'worker_profile_screen.dart';
+import 'certification_screen.dart';
 
 class WorkerDashboardScreen extends StatefulWidget {
   const WorkerDashboardScreen({super.key});
@@ -49,6 +54,25 @@ class _WorkerDashboardScreenState extends State<WorkerDashboardScreen> {
     super.dispose();
   }
 
+  void _handleTabSelected(int index) {
+    if (index == 1) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const WorkerJobsScreen()),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const WorkerMapScreen()),
+      );
+    } else if (index == 3) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const WorkerProfileScreen()),
+      );
+    }
+  }
+
   void _simulateIncomingOffer() {
     final mockOffer = {
       'bookingId': 'mock_book_${DateTime.now().millisecondsSinceEpoch}',
@@ -82,11 +106,22 @@ class _WorkerDashboardScreenState extends State<WorkerDashboardScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(
-          'कामगार डॅशबोर्ड / Worker Portal',
-          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+        title: Text(
+          LocalizationService.t('worker_dashboard'),
+          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
         ),
+        automaticallyImplyLeading: false,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.verified_user_rounded, color: AppColors.primaryGreen),
+            tooltip: 'Aadhaar & Certifications',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CertificationScreen()),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.app_registration_rounded),
             tooltip: 'Worker Registration',
@@ -257,6 +292,59 @@ class _WorkerDashboardScreenState extends State<WorkerDashboardScreen> {
                 ),
               ),
 
+              const SizedBox(height: 16),
+
+              // 5. Worker Certification Card
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [AppColors.primaryGreenSurface, Colors.white],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.primaryGreen.withValues(alpha: 0.4)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryGreen,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.verified_user_rounded, color: Colors.white, size: 22),
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'आधार व कौशल्य प्रमाणपत्र (Verified)',
+                            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+                          ),
+                          Text(
+                            'फेस कार्ड पडताळणीसह १००% निष्पक्ष वाटप',
+                            style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const CertificationScreen()),
+                        );
+                      },
+                      child: const Text('पहा (View)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    ),
+                  ],
+                ),
+              ),
+
               const SizedBox(height: 24),
 
               // 5. Recent Jobs
@@ -286,6 +374,10 @@ class _WorkerDashboardScreenState extends State<WorkerDashboardScreen> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: WorkerBottomNavBar(
+        currentIndex: 0,
+        onTap: _handleTabSelected,
       ),
     );
   }
