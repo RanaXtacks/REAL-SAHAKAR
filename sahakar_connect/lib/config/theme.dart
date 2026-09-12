@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -24,8 +23,8 @@ class AppColors {
   static const Color textMuted = Color(0xFF9CA3AF);
 
   // Subtle Rim Borders
-  static final Color borderSubtle = Colors.black.withOpacity(0.06);
-  static final Color borderMedium = Colors.black.withOpacity(0.12);
+  static final Color borderSubtle = Colors.black.withValues(alpha: 0.06);
+  static final Color borderMedium = Colors.black.withValues(alpha: 0.12);
 
   // Status & Accents
   static const Color success = Color(0xFF10B981);
@@ -84,7 +83,6 @@ class AppTheme {
         primary: AppColors.primaryGreen,
         secondary: AppColors.saffron,
         surface: AppColors.card,
-        background: AppColors.background,
         error: AppColors.error,
       ),
       textTheme: textTheme,
@@ -95,7 +93,7 @@ class AppTheme {
         centerTitle: false,
         iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.card,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -155,7 +153,7 @@ class AppTheme {
   // Common Box Shadows per expect.md
   static List<BoxShadow> get cardShadow => [
         BoxShadow(
-          color: Colors.black.withOpacity(0.04),
+          color: Colors.black.withValues(alpha: 0.04),
           blurRadius: 24,
           spreadRadius: -4,
           offset: const Offset(0, 8),
@@ -164,7 +162,7 @@ class AppTheme {
 
   static List<BoxShadow> get elevatedShadow => [
         BoxShadow(
-          color: AppColors.primaryGreen.withOpacity(0.18),
+          color: AppColors.primaryGreen.withValues(alpha: 0.18),
           blurRadius: 20,
           spreadRadius: -2,
           offset: const Offset(0, 6),
@@ -173,7 +171,7 @@ class AppTheme {
 
   static List<BoxShadow> get saffronGlow => [
         BoxShadow(
-          color: AppColors.saffron.withOpacity(0.3),
+          color: AppColors.saffron.withValues(alpha: 0.3),
           blurRadius: 18,
           spreadRadius: -1,
           offset: const Offset(0, 4),
