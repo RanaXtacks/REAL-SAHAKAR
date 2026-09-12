@@ -66,7 +66,7 @@ class _RatingScreenState extends State<RatingScreen> {
                 decoration: BoxDecoration(
                   color: AppColors.primaryGreenSurface,
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.primaryGreen.withOpacity(0.3), width: 2),
+                  border: Border.all(color: AppColors.primaryGreen.withValues(alpha: 0.3), width: 2),
                 ),
                 child: const Icon(Icons.check_circle_rounded, color: AppColors.primaryGreen, size: 44),
               ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack),

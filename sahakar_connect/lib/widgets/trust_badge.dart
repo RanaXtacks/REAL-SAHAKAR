@@ -54,7 +54,7 @@ class TrustBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: textColor.withOpacity(0.15), width: 0.8),
+        border: Border.all(color: textColor.withValues(alpha: 0.15), width: 0.8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

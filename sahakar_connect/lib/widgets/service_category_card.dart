@@ -39,7 +39,7 @@ class ServiceCategoryCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.primaryGreenSurface,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.primaryGreen.withOpacity(0.15)),
+                    border: Border.all(color: AppColors.primaryGreen.withValues(alpha: 0.15)),
                   ),
                   child: Icon(
                     category.iconData,

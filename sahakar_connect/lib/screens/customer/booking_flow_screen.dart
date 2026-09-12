@@ -260,9 +260,9 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.primaryGreenSurface.withOpacity(0.5),
+                  color: AppColors.primaryGreenSurface.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.primaryGreen.withOpacity(0.2)),
+                  border: Border.all(color: AppColors.primaryGreen.withValues(alpha: 0.2)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

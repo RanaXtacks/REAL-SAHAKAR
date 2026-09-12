@@ -86,7 +86,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   .animate()
                   .scale(duration: 600.ms, curve: Curves.easeOutBack)
                   .then(delay: 200.ms)
-                  .shimmer(duration: 1000.ms, color: Colors.white.withOpacity(0.4)),
+                  .shimmer(duration: 1000.ms, color: Colors.white.withValues(alpha: 0.4)),
 
               const SizedBox(height: 24),
 
@@ -109,7 +109,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 decoration: BoxDecoration(
                   color: AppColors.primaryGreenSurface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.primaryGreen.withOpacity(0.2)),
+                  border: Border.all(color: AppColors.primaryGreen.withValues(alpha: 0.2)),
                 ),
                 child: const Text(
                   'महाराष्ट्र कामगार सहकारी महासंघ',

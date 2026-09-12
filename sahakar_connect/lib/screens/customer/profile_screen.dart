@@ -189,7 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: isWorker ? AppColors.blueSurface : AppColors.saffronLight,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: isWorker ? AppColors.blueBadge.withOpacity(0.3) : AppColors.saffronDark.withOpacity(0.3),
+                    color: isWorker ? AppColors.blueBadge.withValues(alpha: 0.3) : AppColors.saffronDark.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(

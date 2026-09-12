@@ -61,12 +61,12 @@ class ApiService {
   }) async {
     final body = {
       'role': role,
-      if (displayName != null) 'displayName': displayName,
-      if (phoneNumber != null) 'phoneNumber': phoneNumber,
-      if (email != null) 'email': email,
-      if (profilePhotoUrl != null) 'profilePhotoUrl': profilePhotoUrl,
-      if (skills != null) 'skills': skills,
-      if (coordinates != null) 'coordinates': coordinates,
+      'displayName': ?displayName,
+      'phoneNumber': ?phoneNumber,
+      'email': ?email,
+      'profilePhotoUrl': ?profilePhotoUrl,
+      'skills': ?skills,
+      'coordinates': ?coordinates,
     };
 
     final response = await http.post(
@@ -92,7 +92,7 @@ class ApiService {
     final response = await http.post(
       Uri.parse('$_baseUrl${ApiConfig.authSwitchRole}'),
       headers: _getHeaders(),
-      body: jsonEncode({if (targetRole != null) 'targetRole': targetRole}),
+      body: jsonEncode({'targetRole': ?targetRole}),
     );
 
     if (response.statusCode == 200) {
@@ -213,8 +213,8 @@ class ApiService {
     final body = {
       'bookingId': bookingId,
       'method': method,
-      if (razorpayPaymentId != null) 'razorpayPaymentId': razorpayPaymentId,
-      if (razorpayOrderId != null) 'razorpayOrderId': razorpayOrderId,
+      'razorpayPaymentId': ?razorpayPaymentId,
+      'razorpayOrderId': ?razorpayOrderId,
     };
 
     final response = await http.post(

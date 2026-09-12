@@ -206,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.18),
+                            color: Colors.white.withValues(alpha: 0.18),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: const Row(
@@ -240,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           LocalizationService.t('hero_subtitle'),
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.85),
+                            color: Colors.white.withValues(alpha: 0.85),
                           ),
                         ),
                         const SizedBox(height: 16),
