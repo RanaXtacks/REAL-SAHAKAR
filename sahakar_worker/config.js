@@ -1,9 +1,11 @@
 import { Platform } from 'react-native';
 
-// Android Emulator connects to localhost via 10.0.2.2; iOS Simulator uses localhost
-const LOCAL_HOST = Platform.OS === 'android' ? 'http://10.0.2.2:5000' : 'http://localhost:5000';
+// With ADB reverse enabled over USB cable, localhost:5000 connects directly from phone to laptop!
+// Fallback to laptop Wi-Fi IP (10.233.197.36) if testing over wireless LAN.
+const YOUR_LAPTOP_IP = '10.233.197.36';
 
-// In production or live testing, update this to your Render URL (e.g. 'https://real-sahakar.onrender.com')
+const LOCAL_HOST = 'http://localhost:5000';
+
 export const API_URL = LOCAL_HOST;
 export const SOCKET_URL = API_URL;
 
