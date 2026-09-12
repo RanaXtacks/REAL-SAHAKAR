@@ -35,15 +35,15 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB Atlas
-const MONGODB_URI = process.env.MONGODB_URI;
+// const MONGODB_URI = process.env.MONGODB_URI;
 
-if (!MONGODB_URI) {
-    console.error('❌ ERROR: MONGODB_URI is not defined in .env file');
-} else {
-    mongoose.connect(MONGODB_URI)
-        .then(() => console.log('✅ MongoDB Connected Successfully!'))
-        .catch(err => console.error('❌ Database connection error:', err.message));
-}
+// if (!MONGODB_URI) {
+//     console.error('❌ ERROR: MONGODB_URI is not defined in .env file');
+// } else {
+//     mongoose.connect(MONGODB_URI)
+//         .then(() => console.log('✅ MongoDB Connected Successfully!'))
+//         .catch(err => console.error('❌ Database connection error:', err.message));
+// }
 
 // -------------------------------------------------------------------
 // REALTIME SOCKET.IO EVENT HANDLERS
